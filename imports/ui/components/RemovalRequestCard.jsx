@@ -1,61 +1,41 @@
-import React from 'react';
+import React, {Component} from 'react'
+import {Card, CardBody, CardTitle, CardText, CardFooter, Button} from 'reactstrap'
 
-import { Card, CardImg, CardBody, CardTitle, CardText, CardFooter, Button } from 'reactstrap';
-import BusinessDetails from "./BusinessDetails";
+import BusinessDetails from '/imports/ui/components/BusinessDetails'
 
-export default class RemovalRequestCard extends React.Component {
-
+export default class RemovalRequestCard extends Component {
 
   constructor(props) {
     super(props);
-
     this.state = {
-      details: false,
+      details: false
     };
-
     this.approve = this.approve.bind(this);
     this.deny = this.deny.bind(this);
     this.showDetails = this.showDetails.bind(this);
   }
 
-
-  /**
-   * Removes the selected Businesses entry
-   * Removes the corresponding RemovalRequests entry
-   */
   approve() {
-    let requestId = this.props.removal.requestId;
-    let businessId = this.props.removal.businessId;
-
-    Meteor.call('businesses.remove', {
-      id: businessId,
-    });
-
-    Meteor.call('removalRequests.remove', {
-      id: requestId,
-    });
+    const requestId = this.props.removal.requestId;
+    const businessId = this.props.removal.businessId;
+    Meteor.call('businesses.remove', { id: businessId });
+    Meteor.call('removalRequests.remove', { id: requestId });
   }
 
-  /**
-   * Removes the selected RemovalRequests entry
-   */
   deny() {
-    let requestId = this.props.removal.requestId;
-
-    Meteor.call('removalRequests.remove', {
-      id: requestId,
-    });
+    const requestId = this.props.removal.requestId;
+    Meteor.call('removalRequests.remove', { id: requestId });
   }
 
   showDetails() {
-    this.setState({ details: !this.state.details, });
+    this.setState({ details: !this.state.details });
   }
 
   render() {
     return (
       <div className={`col-12 col-md-${this.state.details ? '12' : '4'} mb-3`}>
         <div className="row">
-          <div className={ `col-12 col-md-${this.state.details ? '6 px-0' : '12'}` }>
+          <div className={`col-12 col-md-${this.state.details ? '6 px-0' : '12'}`}>
             <Card className="bg-light h-100">
               <CardBody>
                 <CardTitle>{this.props.removal.name}</CardTitle>
@@ -67,27 +47,22 @@ export default class RemovalRequestCard extends React.Component {
                 <CardText className="mb-0">Reason for Request: {this.props.removal.reason}</CardText>
               </CardBody>
               <CardFooter className="bg-primary text-white">
-                <Button color="primary" className="mr-1" onClick = { this.approve.bind(this) } >
-                  <i className="fas fa-check-circle" aria-hidden="true"/>
+                <Button color="primary" className="mr-1" onClick={this.approve.bind(this)} >
+                  <i className="fas fa-check-circle" aria-hidden="true" />
                 </Button>
-                <Button color="primary" onClick = { this.deny.bind(this) } >
-                  <i className="fas fa-times-circle" aria-hidden="true"/>
+                <Button color="primary" onClick={this.deny.bind(this)}>
+                  <i className="fas fa-times-circle" aria-hidden="true "/>
                 </Button>
-                <Button color="primary" onClick = { this.showDetails.bind(this) } >
-                  <i className="fas fa-question-circle" aria-hidden="true"/>
+                <Button color="primary" onClick={this.showDetails.bind(this)}>
+                  <i className="fas fa-question-circle" aria-hidden="true" />
                 </Button>
               </CardFooter>
             </Card>
           </div>
-          { this.state.details &&
-          <BusinessDetails
-            business={ this.props.removal.business }
-            type={"removal"}
-          />
-          }
-          </div>
+          {this.state.details && <BusinessDetails business={this.props.removal.business} type="removal" />}
+        </div>
       </div>
-    );
+    )
   }
 
 }

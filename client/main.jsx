@@ -1,12 +1,11 @@
-import { Meteor } from 'meteor/meteor';
-import React from 'react';
-import { render } from 'react-dom';
+import {Meteor} from 'meteor/meteor'
+import React from 'react'
+import {render} from 'react-dom'
 
-import App from '/imports/ui/layouts/App';
+import App from '/imports/ui/layouts/App'
 
 Meteor.startup(() => {
   // define language in <html> decl., as standard in WCAG 2.0, Guideline 3.1.1
   document.documentElement.setAttribute('lang', 'en-US');
-  
-  render(<App />, document.getElementById('react-target'));
+  render(<App />, document.getElementById('target'));
 });

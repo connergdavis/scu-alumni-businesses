@@ -1,42 +1,25 @@
-import { Meteor } from 'meteor/meteor';
-import React from 'react';
-import { Button, Col, Form, FormGroup, Row, } from 'reactstrap';
-import update from 'immutability-helper';
-import { withTracker } from 'meteor/react-meteor-data';
-import _ from 'lodash';
+import {Meteor} from 'meteor/meteor'
+import React, {Component} from 'react'
+import update from 'immutability-helper'
+import {withTracker} from 'meteor/react-meteor-data'
 
-/**
- * A component embedded inline to all Submissions, EditRequests, and RemovalRequests when viewed by administrators.
- * Allows for the viewing of more detailed information regarding submissions, edit requests, and removal requests
- */
-class BusinessDetails extends React.Component {
-  
+class BusinessDetails extends Component {
+
   constructor(props) {
     super(props);
-    
     this.state = {
-      /* latest form validation errors */
-      errors: { },
+      errors: {}
     };
+  }
 
-  }
-  
   render() {
-    if(this.props.type == "update") {
-      return (
-        <div className="bg-white px-4 py-3 border-top border-right border-bottom">
-          { this.renderUpdateDetails() }
-        </div>
-      );
-    } else {
-      return (
-        <div className="bg-white px-4 py-3 border-top border-right border-bottom">
-          { this.renderBusinessDetails() }
-        </div>
-      );
-    }
+    return (
+      <div className="bg-white px-4 py-3 border-top border-right border-bottom">
+        {this.props.type === 'update' ? this.renderUpdateDetails() : this.renderBusinessDetails()}
+      </div>
+    )
   }
-  
+
   renderBusinessDetails() {
     return (
       <div>
@@ -49,7 +32,7 @@ class BusinessDetails extends React.Component {
         <p>State: {this.props.business.state}</p>
         <p>Zip: {this.props.business.zip}</p>
       </div>
-    );
+    )
   }
 
   renderUpdateDetails() {
@@ -64,14 +47,13 @@ class BusinessDetails extends React.Component {
         <p>State: {this.props.business.state}</p>
         <p>Zip: {this.props.business.zip}</p>
       </div>
-    );
+    )
   }
 }
 
-export default withTracker((props) => {
+export default withTracker(props => {
   Meteor.subscribe('businesses.public');
-  
   return {
-    currentUser: Meteor.user(),
+    currentUser: Meteor.user()
   };
 })(BusinessDetails);

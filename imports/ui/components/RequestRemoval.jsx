@@ -1,45 +1,38 @@
-import { Meteor } from 'meteor/meteor';
-import React from 'react';
-import { Button, Col, Form, FormGroup, Row, } from 'reactstrap';
-import update from 'immutability-helper';
-import { withTracker } from 'meteor/react-meteor-data';
-import _ from 'lodash';
+import {Meteor} from 'meteor/meteor'
+import React, {Component} from 'react'
+import {Button, Form, FormGroup} from 'reactstrap'
+import update from 'immutability-helper'
+import {withTracker} from 'meteor/react-meteor-data'
+import _ from 'lodash'
 
+import {Businesses} from '/imports/api/businesses/businesses'
+import InputField from '/imports/ui/components/InputField'
 
-import { Businesses } from '/imports/api/businesses/businesses';
-import InputField from '/imports/ui/components/InputField';
+class RequestRemoval extends Component {
 
-
-class RequestRemoval extends React.Component {
-  
   constructor(props) {
     super(props);
-    
     this.state = {
-      /* latest form validation errors */
       errors: { },
-      
-      /* latest form fields */
-      submission: _.omit(this.props.existing[0], ['_id']),
+      submission: _.omit(this.props.existing[0], ['_id'])
     };
-    
     this.handleInput = this.handleInput.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.updateState = this.updateState.bind(this);
   }
-  
+
   render() {
     return (
       <div className="bg-white px-4 py-3 border-top border-right border-bottom">
-        { this.renderForm() }
+        {this.renderForm()}
         <div>
-          <Button color="primary" onClick={ this.handleSubmit.bind(this) }>Request Removal</Button>
-          <Button outline color="secondary" onClick={ this.props.done } className="ml-2">Cancel</Button>
+          <Button color="primary" onClick={this.handleSubmit.bind(this)}>Request Removal</Button>
+          <Button outline color="secondary" onClick={this.props.done} className="ml-2">Cancel</Button>
         </div>
       </div>
     );
   }
-  
+
   renderForm() {
     return (
       <Form onSubmit={ this.handleSubmit }>
@@ -66,7 +59,7 @@ class RequestRemoval extends React.Component {
       </Form>
     );
   }
-  
+
   /**
    * Updates this.state to reflect a new change to a form field.
    * Handles checkboxes, all text-based input fields, textareas.
@@ -108,7 +101,7 @@ class RequestRemoval extends React.Component {
     console.log(`handleInput: { ${name} => ${value} }`);
     this.setState(newState);
   }
-  
+
   /**
    * Attempts to validate the form input fields found in the current state against the Business schema.
    * If successful, the Business will be updated.
@@ -142,7 +135,7 @@ class RequestRemoval extends React.Component {
 
     // convert strings to numbers
     request.gradYear = parseInt(request.gradYear);
-    
+
     // attempt to validate newest submission
     Meteor.call('removalRequest.validate', request, (err, res) => {
       // if there were validation errors, update error state to reflect
@@ -151,7 +144,7 @@ class RequestRemoval extends React.Component {
           list[e.name] = e.message;
           return list;
         }, {});
-        
+
         this.setState({ errors: errors });
       } else {
         if (request.business.phoneNumber) request.business.phoneNumber = request.business.phoneNumber.replace(/\D/g,'');
@@ -193,13 +186,13 @@ class RequestRemoval extends React.Component {
 
     return newState;
   }
-  
+
 }
 
 export default withTracker((props) => {
   Meteor.subscribe('businesses.public');
   Meteor.subscribe('removalRequests');
-  
+
   return {
     existing: Businesses.find({ _id: props.id }).fetch(),
     currentUser: Meteor.user(),

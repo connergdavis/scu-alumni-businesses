@@ -1,9 +1,9 @@
-import React from 'react';
+import React, {Component} from 'react'
 
-import NewBusiness from '/imports/ui/components/NewBusiness';
+import NewBusiness from '/imports/ui/components/NewBusiness'
 
-export default class Header extends React.Component {
-  
+export default class Header extends Component {
+
   render() {
     return (
       <header>
@@ -14,12 +14,16 @@ export default class Header extends React.Component {
         </div>
         <div className="border-top border-primary">
           <div className="container py-3 text-center text-md-left">
-            <h1><a href="/" className="text-dark">Alumni Business Database</a></h1>
-            <h5 className="text-uppercase wordmark"><a href="https://scu.edu">Santa Clara University</a></h5>
+            <h1>
+              <a href="/" className="text-dark">Alumni Business Database</a>
+            </h1>
+            <h5 className="text-uppercase wordmark">
+              Not an official product of <a href="https://scu.edu">Santa Clara University</a>
+            </h5>
           </div>
         </div>
       </header>
     );
   }
-  
+
 }

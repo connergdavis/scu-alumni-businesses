@@ -1,13 +1,10 @@
-import { Meteor } from 'meteor/meteor';
-import { Mongo } from 'meteor/mongo';
-import SimpleSchema from 'simpl-schema';
-import { Tracker } from 'meteor/tracker';
+import {Meteor} from 'meteor/meteor'
+import {Mongo} from 'meteor/mongo'
+import SimpleSchema from 'simpl-schema'
+import {Tracker} from 'meteor/tracker'
 
-import { Businesses } from '/imports/api/businesses/businesses';
+import {Businesses} from '/imports/api/businesses/businesses'
 
-/**
- * A database of Removal Requests.
- */
 const RemovalRequests = new Mongo.Collection('removalRequests');
 
 /**
@@ -23,49 +20,36 @@ const RemovalRequests = new Mongo.Collection('removalRequests');
  * -------------
  */
 const schema = new SimpleSchema({
-  
-  /* name of submitter */
   gradName: {
     type: String,
     required: true,
-    label: 'Your name',
+    label: 'Your name'
   },
-  
-  /* email of submitter */
   gradEmail: {
     type: String,
     regEx: SimpleSchema.RegEx.Email,
-    label: 'Email address',
+    label: 'Email address'
   },
-  
-  /* phone number of submitter */
   gradPhone: {
     type: String,
     regEx: SimpleSchema.RegEx.Phone,
-    label: 'Phone number',
+    label: 'Phone number'
   },
-  
-  /* graduation year */
   gradYear: {
     type: Number,
     required: true,
     min: 1900,
-    label: 'Graduation year',
+    label: 'Graduation year'
   },
-
-  /* business Id */
   businessId: {
     type: String,
     required: true,
-    label: 'Business Id',
+    label: 'Business Id'
   },
-  
-  /* reference to business in table */
   business: {
     type: Businesses.simpleSchema(),
-    required: true,
+    required: true
   },
-
   reason: {
     type: String,
     required: true,
@@ -73,34 +57,18 @@ const schema = new SimpleSchema({
     max: 140,
     label: 'Reason for requesting removal'
   }
-  
 }, {
-  
   requiredByDefault: false,
-  tracker: Tracker,
-  
+  tracker: Tracker
 });
 RemovalRequests.attachSchema(schema);
 
-// publish Business data to client
 if (Meteor.isServer) {
-  Meteor.publish('removalRequests', () => {
-    return RemovalRequests.find({});
-  });
+  Meteor.publish('removalRequests', () => RemovalRequests.find({}));
 }
 
 Meteor.methods({
-  /**
-   * Attempts to validate the provided object against the RemovalRequests schema. Expects strictly fields that are provided
-   * within the schema (e.g., no Meteor ._id).
-   *
-   * @param removalRequest  The removalRequest object to validate.
-   * @returns {*}       undefined if there were no validation errors, and the error details otherwise.
-   *                    'details' contains objects for each input that failed to validate.
-   */
-  'removalRequests.validate'(
-    removalRequest,
-  ) {
+  'removalRequests.validate'(removalRequest) {
     try {
       RemovalRequests.simpleSchema().validate(removalRequest);
       return undefined;
@@ -109,46 +77,22 @@ Meteor.methods({
     }
   },
 
-  /**
-   * Attempts to insert the provided object into the RemovalRequests collection. Expects a valid object, but still ensures
-   * no invalid objects are inserted.
-   *
-   * @param removalRequest  The removalRequest object to insert.
-   * @returns {*}       If removalRequest fails, returns nothing. Otherwise, returns the contents of the newly inserted
-   *                    RemovalRequest.
-   */
-  'removalRequests.insert'(
-    removalRequest,
-  ) {
-    // validate input
+  'removalRequests.insert'(removalRequest) {
     RemovalRequests.simpleSchema().validate(removalRequest);
-    
-    // check for duplicate (by name); Shouldn't come up: any duplicated should be caught by schema
-    if (RemovalRequests.findOne({ gradName: removalRequest.gradName, business: removalRequest.business, })) {
+    if (RemovalRequests.findOne({ gradName: removalRequest.gradName, business: removalRequest.business })) {
       throw new Meteor.Error('removalRequests-found', 'You have already submitted that removal request.');
     } else {
-      // submit to database
       const result = RemovalRequests.insert(removalRequest, (err) => {
         if (err) {
           throw new Meteor.Error('removalRequests.insert', err.details);
         }
       });
-      
       return RemovalRequests.find({ _id: result }).fetch();
     }
   },
 
-  /**
-   * Removes an RemovalRequest from the index, which should be done upon either RemovalRequest approval or denial.
-   *
-   * @param id  The removalRequest to remove.
-   */
-  'removalRequests.remove'({
-    id,
-  }) {
-    RemovalRequests.remove({
-      _id: id,
-    });
+  'removalRequests.remove'({id}) {
+    RemovalRequests.remove({ _id: id });
   },
 });
 
