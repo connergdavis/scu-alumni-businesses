@@ -64,12 +64,9 @@ export default class Footer extends React.Component {
         <div className="bg-gradient-primary mt-4 small align-items-center">
           <div className="container d-flex align-items-center p-3">
             <span className="mr-auto text-uppercase wordmark link-home">
-              <a href="https://scu.edu" className="footer-wordmark">Santa Clara University</a>
+              <a href="https://scu.edu" className="footer-wordmark">This is NOT a product of Santa Clara University.</a>
             </span>
             <div className="d-flex align-items-center ml-auto">
-              <div>
-                <span className="px-2">&copy; 2018</span>
-              </div>
               <div>
                 <a href="/admin" className="text-white px-2">Admin</a>
                 <span className="text-white px-2">|</span>
